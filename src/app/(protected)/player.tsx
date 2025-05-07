@@ -5,12 +5,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import dummyBooks from "@/dummyBooks";
 import PlaybackBar from "@/components/PlaybackBar";
-import { useAudioPlayer } from "expo-audio";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 
 export default function PlayerScreen() {
   const book = dummyBooks[0];
 
   const player = useAudioPlayer({ uri: book.audio_url });
+  const playerStatus = useAudioPlayerStatus(player);
+
+  console.log(JSON.stringify(playerStatus, null, 2));
 
   return (
     <SafeAreaView className="flex-1  p-4 py-10 gap-4">
@@ -29,24 +32,26 @@ export default function PlayerScreen() {
         <Text className="text-white text-2xl font-bold text-center">
           {book.title}
         </Text>
-        <PlaybackBar value={0.1} />
+        <PlaybackBar
+          currentTime={playerStatus.currentTime}
+          duration={playerStatus.duration}
+          onSeek={(seconds: number) => player.seekTo(seconds)}
+        />
 
         <View className="flex-row items-center justify-between mt-8">
           <Ionicons name="play-skip-back" size={24} color="white" />
           <Ionicons name="play-back" size={24} color="white" />
           <Ionicons
-            onPress={() => player.play()}
-            name="play"
+            onPress={() =>
+              playerStatus.playing ? player.pause() : player.play()
+            }
+            name={playerStatus.playing ? "pause" : "play"}
             size={50}
             color="white"
           />
           <Ionicons name="play-forward" size={24} color="white" />
           <Ionicons name="play-skip-forward" size={24} color="white" />
         </View>
-
-        <Text className="text-3xl font-bold text-center mb-8 text-white">
-          Player
-        </Text>
       </View>
     </SafeAreaView>
   );
