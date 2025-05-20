@@ -1,6 +1,7 @@
 import { Text, View, Image, Pressable } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import { usePlayer } from "@/app/providers/PlayerProvider";
 
 type Book = {
   id: string;
@@ -15,9 +16,13 @@ type BookListItemProps = {
 };
 
 export default function BookListItem({ book }: BookListItemProps) {
+  const { setBook } = usePlayer();
   return (
     <Link href="/player" asChild>
-      <Pressable className="flex-row gap-4 items-center">
+      <Pressable
+        onPress={() => setBook(book)}
+        className="flex-row gap-4 items-center"
+      >
         <Image
           source={{ uri: book.thumbnail_url }}
           className="w-16 aspect-square rounded-md"

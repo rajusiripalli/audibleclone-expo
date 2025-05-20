@@ -2,13 +2,12 @@ import { Text, View, Image, Pressable } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useAudioPlayerStatus } from "expo-audio";
-import { usePlayer } from "@/providers/PlayerProvider";
+import { usePlayer } from "@/app/providers/PlayerProvider";
 import dummyBooks from "@/dummyBooks";
 
 export default function FloatingPlayer() {
-  const book = dummyBooks[0]; // Replace with your actual book data;
-  //const { player, book } = usePlayer();
-  //const playerStatus = useAudioPlayerStatus(player);
+  const { player, book } = usePlayer();
+  const playerStatus = useAudioPlayerStatus(player);
 
   // console.log(JSON.stringify(playerStatus, null, 2));
 
@@ -26,7 +25,20 @@ export default function FloatingPlayer() {
           <Text className="text-gray-400">{book.author}</Text>
         </View>
 
-        <AntDesign name={"playcircleo"} size={24} color="gainsboro" />
+        <AntDesign
+          name={
+            playerStatus.isBuffering
+              ? "loading2"
+              : playerStatus.playing
+              ? "pause"
+              : "playcircleo"
+          }
+          size={24}
+          color="gainsboro"
+          onPress={() =>
+            playerStatus.playing ? player.pause() : player.play()
+          }
+        />
       </Pressable>
     </Link>
   );
